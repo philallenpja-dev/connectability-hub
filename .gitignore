@@ -7,3 +7,6 @@ dist
 .env.local
 
 .vercel
+
+# The CMS lives in its own separate repo
+cms/

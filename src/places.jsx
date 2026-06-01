@@ -2,6 +2,7 @@ import React from 'react';
 import { A11Y_ATTRS, A11yIcon, Badge, Btn, Card, Input, MOCK_EVENTS, ProgressSteps, SUBURBS } from './shared.jsx';
 import { EventCardDesktop } from './desktopScreens.jsx';
 import { usePlaces } from './hooks/usePlaces.js';
+import { AddressAutocomplete } from './components/AddressAutocomplete.jsx';
 
 // ─── ConnectAbility Hub — Places Feature ─────────────────────────────────────
 // Requires hub-shared.jsx to be loaded first
@@ -387,7 +388,20 @@ export const PlaceRegisterFlow = ({ onComplete, onBack }) => {
                 ))}
               </div>
             </div>
-            <Input label="Street address (required)" placeholder="e.g. 201 Napier St" value={form.address} onChange={e => f('address', e.target.value)} />
+            <AddressAutocomplete
+              label="Street address"
+              required
+              value={form.address}
+              placeholder="Start typing your address…"
+              onSelect={(s) => {
+                f('address', s.street || s.label.split(',')[0]);
+                f('suburb', [s.suburb, s.postcode].filter(Boolean).join(' '));
+                f('latitude', s.latitude);
+                f('longitude', s.longitude);
+                f('postcode', s.postcode);
+                f('state', s.state);
+              }}
+            />
             <Input label="Suburb / postcode (required)" placeholder="e.g. Fitzroy 3065" value={form.suburb} onChange={e => f('suburb', e.target.value)} />
             <Input label="Maximum capacity" optional placeholder="e.g. 80" type="number" value={form.capacity} onChange={e => f('capacity', e.target.value)} />
             <div style={{ marginBottom: 16 }}>

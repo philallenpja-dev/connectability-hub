@@ -1,5 +1,6 @@
 import React from 'react';
 import { A11Y_ATTRS, A11yIcon, Avatar, Badge, Btn, CATEGORIES, Card, Input, MOCK_ATTENDEES, MOCK_BUSINESSES, MOCK_EVENTS, MOCK_IDEAS, MOCK_PENDING_CONNECTIONS, SUBURBS } from './shared.jsx';
+import { useEvents } from './hooks/useEvents.js';
 import { RegistrationFlow } from './hubScreens.jsx';
 
 // ─── ConnectAbility Hub — Desktop Screen Components ──────────────────────────
@@ -240,10 +241,11 @@ export const EventsDesktop = ({ onNavigate, rsvpState }) => {
   const [a11yFilters, setA11yFilters] = React.useState(new Set());
   const [view, setView] = React.useState('grid');
   const [sort, setSort] = React.useState('date');
+  const { events, loading, source } = useEvents(MOCK_EVENTS);
 
   const toggleA11y = (id) => setA11yFilters(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const filtered = MOCK_EVENTS.filter(ev => {
+  const filtered = events.filter(ev => {
     if (search && !ev.title.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeCategory !== 'All' && ev.category !== activeCategory) return false;
     if (activeSuburb !== 'All suburbs' && ev.suburb !== activeSuburb) return false;
@@ -274,7 +276,7 @@ export const EventsDesktop = ({ onNavigate, rsvpState }) => {
           {CATEGORIES.map(c => (
             <button key={c} onClick={() => setActiveCategory(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '8px 10px', borderRadius: 8, border: 'none', background: activeCategory === c ? 'oklch(93% 0.04 195)' : 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, color: activeCategory === c ? 'oklch(38% 0.14 195)' : 'oklch(30% 0.01 80)', fontWeight: activeCategory === c ? 600 : 400, marginBottom: 2 }}>
               <span>{c}</span>
-              <span style={{ fontSize: 12, color: 'oklch(60% 0.008 80)' }}>{c === 'All' ? MOCK_EVENTS.length : MOCK_EVENTS.filter(e => e.category === c).length}</span>
+              <span style={{ fontSize: 12, color: 'oklch(60% 0.008 80)' }}>{c === 'All' ? events.length : events.filter(e => e.category === c).length}</span>
             </button>
           ))}
 
