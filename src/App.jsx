@@ -11,6 +11,7 @@ import { DashboardDesktop } from './dashboard.jsx';
 import {
   PlacesDesktop, PlaceDetailDesktop, PlaceRegisterDesktop
 } from './places.jsx';
+import { useBusinesses } from './hooks/useBusinesses.js';
 import {
   CarerOversightDesktop, CarerInviteDesktop,
   ParticipantInviteOnboarding, ParticipantSupportView
@@ -193,12 +194,13 @@ export default function App() {
 function BusinessesDesktop({ onNavigate }) {
   const [cat, setCat] = React.useState('All');
   const categories = ['All', 'Café', 'Venue', 'Allied Health', 'Recreation', 'Retail', 'Transport'];
-  const businesses = [
+  const fallback = React.useMemo(() => [
     ...MOCK_BUSINESSES,
     { id: 4, name: 'Accessible Transport Co.', category: 'Transport', suburb: 'Melbourne CBD', a11y: ['wheelchair', 'parking'], badge: true },
     { id: 5, name: 'Sensory Play Space', category: 'Recreation', suburb: 'Northcote', a11y: ['sensory', 'lowstim', 'companion'], badge: true },
     { id: 6, name: 'Companion Card Diner', category: 'Café', suburb: 'Brunswick', a11y: ['wheelchair', 'companion', 'parking'], badge: false },
-  ];
+  ], []);
+  const { businesses } = useBusinesses(fallback);
   const filtered = businesses.filter(b => cat === 'All' || b.category === cat);
 
   return (

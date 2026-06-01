@@ -1,6 +1,7 @@
 import React from 'react';
 import { A11Y_ATTRS, A11yIcon, Avatar, Badge, Btn, CATEGORIES, Card, Input, MOCK_ATTENDEES, MOCK_BUSINESSES, MOCK_EVENTS, MOCK_IDEAS, MOCK_PENDING_CONNECTIONS, SUBURBS } from './shared.jsx';
 import { useEvents } from './hooks/useEvents.js';
+import { useIdeas } from './hooks/useIdeas.js';
 import { RegistrationFlow } from './hubScreens.jsx';
 
 // ─── ConnectAbility Hub — Desktop Screen Components ──────────────────────────
@@ -489,6 +490,7 @@ export const IdeasDesktop = ({ auth, onNavigate }) => {
   const [newIdea, setNewIdea] = React.useState({ title: '', desc: '', category: '' });
   const [submitted, setSubmitted] = React.useState(false);
   const [toast, setToast] = React.useState('');
+  const { ideas, loading, source } = useIdeas(MOCK_IDEAS);
 
   const showToast = msg => { setToast(msg); setTimeout(() => setToast(''), 2500); };
   const toggleInterest = (id) => {
@@ -496,7 +498,7 @@ export const IdeasDesktop = ({ auth, onNavigate }) => {
     setInterests(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
     showToast(interests.has(id) ? 'Interest removed' : '💛 Interest recorded!');
   };
-  const sorted = [...MOCK_IDEAS].sort((a, b) => sort === 'popular' ? (b.interests + (interests.has(b.id)?1:0)) - (a.interests + (interests.has(a.id)?1:0)) : 0);
+  const sorted = [...ideas].sort((a, b) => sort === 'popular' ? (b.interests + (interests.has(b.id)?1:0)) - (a.interests + (interests.has(a.id)?1:0)) : 0);
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 32px', display: 'grid', gridTemplateColumns: '300px 1fr', gap: 40, alignItems: 'start' }}>
@@ -515,7 +517,7 @@ export const IdeasDesktop = ({ auth, onNavigate }) => {
             ))}
           </div>
           <div style={{ marginTop: 16, background: 'oklch(95% 0.04 155)', borderRadius: 12, padding: '14px 16px' }}>
-            <p style={{ fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.14 155)', marginBottom: 4 }}>🎉 {MOCK_IDEAS.filter(i=>i.status==='live').length} idea turned event!</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.14 155)', marginBottom: 4 }}>🎉 {ideas.filter(i=>i.status==='live').length} idea turned event!</p>
             <p style={{ fontSize: 12, color: 'oklch(42% 0.10 155)', lineHeight: 1.5 }}>Community ideas that got enough interest are now live events.</p>
           </div>
         </div>
@@ -524,7 +526,7 @@ export const IdeasDesktop = ({ auth, onNavigate }) => {
       {/* Ideas feed */}
       <main>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <p style={{ fontSize: 15, color: 'oklch(45% 0.008 80)' }}><strong style={{ color: 'oklch(18% 0.01 80)' }}>{MOCK_IDEAS.length}</strong> community ideas</p>
+          <p style={{ fontSize: 15, color: 'oklch(45% 0.008 80)' }}><strong style={{ color: 'oklch(18% 0.01 80)' }}>{ideas.length}</strong> community ideas</p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {sorted.map(idea => {
